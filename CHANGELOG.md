@@ -28,6 +28,28 @@ demo milestones, not semver release cadence.
   smoke prompts), targeting Power Platform env
   `63b4b29b-b3b0-ed70-9136-524a53a22e06`.
 - `.env.sample` updated with env reference comments.
+- **Phase 2 chat backend (in progress)**: Flask app (`app/app.py`) exposing
+  `GET /healthz`, `GET /api/chat/session`, `POST /api/chat` (SSE).
+  - `app/config.py` env-driven constants + `assert_directline_configured()`.
+  - `app/session.py` thread-safe `SessionStore` keyed by browser session id.
+  - `app/cs_directline.py` Direct Line REST polling client (regional
+    gateway derived from `streamUrl`; activity-id echo filter; `ask()`
+    one-turn convenience), ported from `copilot-studio-acs-voice`.
+  - `app/system_prompt.md` Granite Peak concierge persona.
+  - `app/cs_tool.py` `ask_granite_peak_orders` function tool descriptor +
+    dispatcher.
+  - `app/foundry_client.py` Azure OpenAI Responses-API tool loop with
+    `DefaultAzureCredential`; falls back to a deterministic stub that
+    delegates straight to Copilot Studio when `FOUNDRY_PROJECT_ENDPOINT`
+    is unset (so the stack is demo-able before the Foundry deployment
+    exists).
+  - `Dockerfile.bridge` (gunicorn gthread) + `docker-compose.yml`
+    `bridge` service depending on `orders_api` healthcheck.
+  - `requirements.txt` adds `flask`, `gunicorn`, `requests`,
+    `python-dotenv`, `openai`, `azure-identity`.
+  - `tests/test_bridge.py` + `tests/test_cs_directline.py` (8 cases): SSE
+    stub path, session cookie reuse, `/healthz`, empty-body 400,
+    region-host derivation. Total suite: 20 passed.
 
 ### Reverted
 - Briefly considered reusing the SterlingOMS_Template CS agents on

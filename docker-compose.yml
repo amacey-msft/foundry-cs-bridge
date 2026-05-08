@@ -1,5 +1,8 @@
-# Local dev compose for Phase 1: just the mock orders API.
-# The Flask front-end + Foundry chat backend join in Phase 2.
+# Local dev compose:
+#   - orders_api : Granite Peak mock backend (FastAPI on :8000)
+#   - bridge     : Flask chat backend (gunicorn on :5000)
+#
+# Phase 2.5 will add the static front-end as part of the bridge.
 services:
   orders_api:
     build:
@@ -16,3 +19,26 @@ services:
       timeout: 3s
       retries: 5
       start_period: 5s
+
+  bridge:
+    build:
+      context: .
+      dockerfile: Dockerfile.bridge
+    image: foundry-cs-bridge-bridge:dev
+    container_name: foundry-cs-bridge
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - ORDERS_API_BASE_URL=http://orders_api:8000
+    depends_on:
+      orders_api:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys;sys.exit(0 if urllib.request.urlopen('http://localhost:5000/healthz', timeout=2).status==200 else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
