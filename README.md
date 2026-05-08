@@ -9,7 +9,24 @@ Demo retail front end: **Granite Peak Outfitters** — fictional New England
 ski + bike retailer.
 
 ## Status
-Phase 0 — initial scaffold. See [`plan.md`](plan.md) for full plan.
+Phase 1 in progress. See [`plan.md`](plan.md) for full plan and
+[`docs/02-cs-orders-setup.md`](docs/02-cs-orders-setup.md) for the manual
+Copilot Studio provisioning recipe.
+
+## Local dev quick start
+
+```powershell
+# 1. Run the mock orders API
+docker compose up -d           # or: uvicorn orders_api.main:app --reload --port 8000
+curl http://localhost:8000/healthz
+
+# 2. Expose it to Copilot Studio
+.\scripts\devtunnel-create.ps1
+.\scripts\devtunnel-host.ps1   # prints public URL
+
+# 3. Plug the public URL into the CS agent's HTTP Request tools
+#    (one-time per tunnel; see docs/02-cs-orders-setup.md).
+```
 
 ## Architecture (high level)
 

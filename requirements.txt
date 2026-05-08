@@ -1,0 +1,7 @@
+# Phase 1 (mock orders API) — minimum versions; CI will pin once we add it.
+# Floor versions chosen for Python 3.13 wheel availability.
+fastapi>=0.115.6
+uvicorn[standard]>=0.32.1
+pydantic>=2.10.3
+
+# Phase 2 (Foundry chat backend) deps land here in a later commit.
