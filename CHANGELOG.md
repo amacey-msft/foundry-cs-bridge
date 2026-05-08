@@ -11,14 +11,12 @@ demo milestones, not semver release cadence.
   (full delivery plan recovered from prior session).
 - Phase 0 done: GitHub repo `amacey-msft/foundry-cs-bridge` (private), branch
   `feat/initial-scaffold`, draft PR #1.
-- `.env.sample` with Copilot Studio Direct Line token endpoint for the
-  existing Sterling OMS "Order Management System Agent" (parent of a 6-agent
-  generative-orchestration system).
+- `.env.sample` placeholder for Phase 1 (CS agent provisioning + mock orders
+  API endpoints, populated as Phase 1 progresses).
 
-### Changed
-- **Phase 1 revised:** existing Copilot Studio agents from
-  `SterlingOMS_Template` are reused. No CS provisioning, no in-repo mock
-  orders API. Parent agent verified live via Direct Line token endpoint
-  probe (2026-05-08).
-- Plan's `orders_api/` scaffold removed; OMS data lives in Dataverse via
-  Sterling solution.
+### Reverted
+- Briefly considered reusing the SterlingOMS_Template CS agents on
+  2026-05-08 (commit `24c75b2`); reverted same day. Original plan stands:
+  greenfield `awm_contosoorders` CS agent + in-repo mock orders API +
+  Granite Peak ski/bike SKUs end-to-end. Sterling reuse blocked by data
+  mismatch (Sterling product catalog ≠ Granite Peak ski/bike).

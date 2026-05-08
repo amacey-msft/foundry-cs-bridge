@@ -70,35 +70,19 @@ Web-only consumer UI (no Teams, no voice, no SN handoff in v1 — backlog).
 3. `git init`, push to `amacey-msft/copilot-studio-foundry-orders-bridge` (new GH repo).
 4. Create branch `feat/initial-scaffold`, push, open draft PR.
 
-### Phase 1 — Reuse existing Copilot Studio orders agent (REVISED 2026-05-08)
-
-**No CS agent provisioning required.** The Sterling OMS Template (sibling
-repo `c:\Users\alanmacey\OneDrive - Microsoft\source\SterlingOMS_Template`)
-deploys a six-agent Order Management System into a Power Platform / Dataverse
-environment. Parent agent is **already published, unauthenticated, and
-Direct-Line-reachable.** Stub `orders_api/` no longer needed — child agents
-call Power Automate flows against Dataverse OMS tables.
-
-1. Reference details (full record in `/memories/repo/cs-orders-agent.md`):
-   - Parent display name: **Order Management System Agent**
-   - Parent schema: `new_bot_dc222ce70439f11188b36045bdf0ef76`
-   - AAD app id: `5c3eebd1-d965-4bb9-b3e9-afe262e891bc`
-   - DL token endpoint: see `.env.sample` `CS_DIRECTLINE_TOKEN_ENDPOINT`
-   - Region suffix on conversation ids: `-us` (unitedstates regional gateway)
-   - 5 child specialists: My Orders, Order Lookup, Return Eligibility,
-     Process Return, Order Management.
-2. **Verification (2026-05-08):** GET DL token endpoint returns 200 with
-   `{token, conversationId, expires_in: 3600}`. Capabilities cover order
-   create / update / cancel / status / returns + return policy.
-3. **Scoped out of v1:** A2A primary path (Phase 3) — parent is
-   unauthenticated by template design (telephony-friendly). A2A would
-   require auth-mode change that breaks the Sterling deployment. Stay on
-   Direct Line fallback indefinitely unless user revisits.
-4. **Open question for Phase 2.5:** Granite Peak catalog/order data shown
-   on-page must reconcile with Sterling OMS Dataverse data. Either align
-   Granite Peak SKUs with seeded Sterling orders OR explicitly call out the
-   demo as "chat backed by separate OMS dataset." Decision deferred to
-   Phase 2.5 kickoff.
+### Phase 1 — Copilot Studio orders agent
+1. Create new CS agent `awm_contosoorders` (generative orchestration, per
+   user preferences rule). Topics: OrderStatus, ReturnRequest, RefundQuery,
+   ExchangeRequest. Each topic uses HTTP Request tool against a stub orders
+   API hosted in this repo (FastAPI under `orders_api/`).
+2. Stub orders API returns deterministic mock data keyed by order id (no
+   real Power Platform connectors in v1; keeps demo self-contained).
+3. Topic instructions tightened to short responses (avoid sync A2A timeout).
+4. Enable "Allow ungrounded responses" on agent (per repo memory rule for
+   multi-turn).
+5. Capture: agent schema name, env id, agent app id, DL token endpoint,
+   A2A endpoint URL (when Direct Engine A2A enabled — see Phase 3).
+6. Save to new `/memories/repo/cs-orders-agent.md`.
 
 ### Phase 2 — Foundry agent (fallback path: Direct Line tool wrapper)
 1. New Foundry project + agent definition. Model: `gpt-4.1-mini` (cheap; bump
@@ -284,7 +268,10 @@ Phase 5 (deploy):
     session.py
     system_prompt.md
     config.py
-  # orders_api/  -- REMOVED 2026-05-08; reusing Sterling OMS Dataverse backend
+  orders_api/
+    __init__.py
+    main.py            # FastAPI stub
+    mock_data.py
   templates/           # Jinja2 retail site
     base.html
     home.html
