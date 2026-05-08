@@ -29,7 +29,7 @@ import time
 from collections.abc import Iterator
 from typing import Any
 
-from . import config, cs_directline, cs_tool
+from . import config, cs_directline, cs_tool, orders_tools
 from .session import ChatSession
 
 _log = logging.getLogger(__name__)
@@ -87,7 +87,7 @@ def _azure_openai_client() -> Any:
     )
     _client = AzureOpenAI(
         azure_endpoint=endpoint,
-        api_version="2024-10-21",
+        api_version=config.FOUNDRY_API_VERSION,
         azure_ad_token_provider=token_provider,
     )
     return _client
@@ -98,16 +98,23 @@ def _azure_openai_client() -> Any:
 # ---------------------------------------------------------------------------
 
 
-def handle_user_message(sess: ChatSession, user_text: str) -> Iterator[str]:
-    """Yield text chunks for one user turn, suitable for SSE.
+def handle_user_message(sess: ChatSession, user_text: str) -> Iterator[dict[str, Any]]:
+    """Yield event dicts for one user turn, suitable for SSE.
+
+    Event shapes:
+      - ``{"kind": "text", "text": str}`` — assistant content delta.
+      - ``{"kind": "source", "source": "concierge"|"orders_agent"}`` — UI
+        badge hint. Emitted at most once per turn, before the final text
+        deltas. ``orders_agent`` means the Copilot Studio Orders Agent
+        was invoked (via ``ask_granite_peak_orders``); ``concierge``
+        means the Foundry concierge answered itself (with or without the
+        direct orders-API tools).
 
     Maintains ``sess.foundry_history`` so the model has multi-turn context.
-    Dispatches any ``ask_granite_peak_orders`` tool calls via
-    :mod:`app.cs_tool`.
     """
     user_text = (user_text or "").strip()
     if not user_text:
-        yield "(empty message)"
+        yield {"kind": "text", "text": "(empty message)"}
         return
 
     sess.foundry_history.append({"role": "user", "content": user_text})
@@ -124,7 +131,8 @@ def handle_user_message(sess: ChatSession, user_text: str) -> Iterator[str]:
             _log.exception("[foundry] stub DL call failed")
             reply = f"(error contacting orders agent: {exc})"
         sess.foundry_history.append({"role": "assistant", "content": reply})
-        yield reply
+        yield {"kind": "source", "source": "orders_agent"}
+        yield {"kind": "text", "text": reply}
         return
 
     yield from _stream_with_azure_openai(sess)
@@ -142,9 +150,12 @@ def _build_messages(sess: ChatSession) -> list[dict[str, Any]]:
     ]
 
 
-def _stream_with_azure_openai(sess: ChatSession) -> Iterator[str]:
+def _stream_with_azure_openai(sess: ChatSession) -> Iterator[dict[str, Any]]:
     client = _azure_openai_client()
-    tools = [cs_tool.TOOL_DESCRIPTOR]
+    tools = [cs_tool.TOOL_DESCRIPTOR, *orders_tools.TOOL_DESCRIPTORS]
+
+    cs_tool_invoked = False
+    source_emitted = False
 
     # Tool-loop: model may emit one or more tool calls before producing the
     # final user-facing assistant message. Cap at 4 hops (per user-memory
@@ -169,8 +180,14 @@ def _stream_with_azure_openai(sess: ChatSession) -> Iterator[str]:
             if delta is None:
                 continue
             if delta.content:
+                if not source_emitted:
+                    yield {
+                        "kind": "source",
+                        "source": "orders_agent" if cs_tool_invoked else "concierge",
+                    }
+                    source_emitted = True
                 assistant_chunks.append(delta.content)
-                yield delta.content
+                yield {"kind": "text", "text": delta.content}
             if delta.tool_calls:
                 for tc in delta.tool_calls:
                     idx = tc.index or 0
@@ -217,7 +234,13 @@ def _stream_with_azure_openai(sess: ChatSession) -> Iterator[str]:
 
         # Dispatch each tool call and append its result.
         for slot in tool_call_acc.values():
-            result = cs_tool.dispatch(sess, slot["name"], slot["arguments"] or "{}")
+            name = slot["name"]
+            args = slot["arguments"] or "{}"
+            if name in {d["function"]["name"] for d in orders_tools.TOOL_DESCRIPTORS}:
+                result = orders_tools.dispatch(name, args)
+            else:
+                cs_tool_invoked = True
+                result = cs_tool.dispatch(sess, name, args)
             sess.foundry_history.append(
                 {
                     "role": "tool",
@@ -233,4 +256,9 @@ def _stream_with_azure_openai(sess: ChatSession) -> Iterator[str]:
         "rephrase.)"
     )
     sess.foundry_history.append({"role": "assistant", "content": fallback})
-    yield fallback
+    if not source_emitted:
+        yield {
+            "kind": "source",
+            "source": "orders_agent" if cs_tool_invoked else "concierge",
+        }
+    yield {"kind": "text", "text": fallback}

@@ -59,6 +59,7 @@ ORDERS_API_BASE_URL = os.environ.get(
 FOUNDRY_PROJECT_ENDPOINT = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "").strip()
 FOUNDRY_AGENT_ID = os.environ.get("FOUNDRY_AGENT_ID", "").strip()
 FOUNDRY_MODEL_DEPLOYMENT = os.environ.get("FOUNDRY_MODEL_DEPLOYMENT", "gpt-4.1-mini").strip()
+FOUNDRY_API_VERSION = os.environ.get("FOUNDRY_API_VERSION", "2024-10-21").strip()
 
 # --- Backend selector --------------------------------------------------
 # "directline" = Phase 2 default (Foundry chat backend calls CS over DL).

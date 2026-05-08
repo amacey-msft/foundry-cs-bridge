@@ -12,15 +12,18 @@ from __future__ import annotations
 
 import json
 import logging
+import pathlib
 import uuid
 
-from flask import Flask, Response, jsonify, request, stream_with_context
+import requests
+from flask import Flask, Response, jsonify, request, send_from_directory, stream_with_context
 
 from . import config, foundry_client, session
 
 _log = logging.getLogger("foundry_cs_bridge")
 
 SESSION_COOKIE = "gp_session_id"
+_STATIC_DIR = pathlib.Path(__file__).parent / "static"
 
 
 def create_app() -> Flask:
@@ -28,7 +31,30 @@ def create_app() -> Flask:
         level=getattr(logging, config.LOG_LEVEL, logging.INFO),
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
     )
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        static_folder=str(_STATIC_DIR),
+        static_url_path="/static",
+    )
+
+    @app.get("/")
+    def index() -> Response:
+        return send_from_directory(_STATIC_DIR, "index.html")
+
+    @app.get("/api/catalog")
+    def catalog() -> Response:
+        if not config.ORDERS_API_BASE_URL:
+            return jsonify([])
+        try:
+            r = requests.get(
+                f"{config.ORDERS_API_BASE_URL.rstrip('/')}/catalog",
+                timeout=10,
+            )
+            r.raise_for_status()
+            return jsonify(r.json())
+        except Exception as exc:  # noqa: BLE001
+            _log.warning("[catalog] proxy failed: %s", exc)
+            return jsonify([])
 
     @app.get("/healthz")
     def healthz() -> Response:
@@ -78,8 +104,11 @@ def create_app() -> Flask:
         def event_stream():
             yield _sse({"type": "session", "session_id": sess.session_id})
             try:
-                for chunk in foundry_client.handle_user_message(sess, user_text):
-                    yield _sse({"type": "delta", "text": chunk})
+                for evt in foundry_client.handle_user_message(sess, user_text):
+                    if evt.get("kind") == "source":
+                        yield _sse({"type": "source", "source": evt.get("source")})
+                    else:
+                        yield _sse({"type": "delta", "text": evt.get("text", "")})
                 yield _sse({"type": "done"})
             except Exception as exc:  # noqa: BLE001
                 _log.exception("[chat] stream failed")

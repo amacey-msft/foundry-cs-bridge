@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Granite Peak Outfitters — Vermont's Mountain Sport Co.</title>
+<link rel="stylesheet" href="/static/site.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="brand">
+    <div class="brand-mark">▲</div>
+    <div>
+      <div class="brand-name">Granite Peak</div>
+      <div class="brand-tag">Outfitters · Burlington, VT</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#shop">Shop</a>
+    <a href="#story">Our Story</a>
+    <a href="#account">Account</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>Built for Vermont's mountains.</h1>
+    <p>
+      Skis, bikes, and apparel field-tested from Mansfield to the Kingdom
+      Trails. Talk to our concierge — she knows the gear, your orders, and
+      our return policy by heart.
+    </p>
+    <button id="open-chat" class="btn-primary">Chat with our concierge</button>
+  </div>
+</section>
+
+<section id="shop" class="catalog">
+  <h2>This week's pick</h2>
+  <div class="grid" id="catalog-grid">
+    <div class="card placeholder">Loading catalog…</div>
+  </div>
+</section>
+
+<section id="story" class="story">
+  <h2>Our story</h2>
+  <p>
+    Founded by skiers who got tired of driving to Boston for gear. Family
+    owned since 2003. We test everything we sell — usually before
+    breakfast.
+  </p>
+</section>
+
+<footer class="site-footer">
+  <span>© Granite Peak Outfitters · Burlington VT</span>
+  <span>Returns within 30 days · Free shipping over $99</span>
+</footer>
+
+<!-- Chat widget -->
+<div id="chat-launcher" class="chat-launcher" title="Chat with concierge">
+  <span>💬</span>
+</div>
+<div id="chat-panel" class="chat-panel" hidden>
+  <div class="chat-head">
+    <div>
+      <div class="chat-title">Granite Peak Concierge</div>
+      <div class="chat-sub">Gear advice, orders, returns</div>
+    </div>
+    <button id="chat-close" class="chat-close" aria-label="Close">×</button>
+  </div>
+  <div id="chat-log" class="chat-log"></div>
+  <form id="chat-form" class="chat-form">
+    <input id="chat-input" type="text" placeholder="Ask about a ski, your last order, anything…" autocomplete="off" />
+    <button type="submit">Send</button>
+  </form>
+</div>
+
+<script src="/static/chat.js"></script>
+<script src="/static/catalog.js"></script>
+</body>
+</html>

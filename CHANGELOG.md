@@ -7,6 +7,58 @@ demo milestones, not semver release cadence.
 ## [Unreleased]
 
 ### Added
+- Architecture documentation pack:
+  - `docs/00-architecture-overview.md` with plain-language logical and
+    physical architecture diagrams for customer walkthroughs.
+  - `docs/01-architecture.md` with detailed component responsibilities,
+    runtime sequence diagrams, identity model, deployment inventory, and
+    demo walkthrough map.
+  - `docs/03-deployment-runbook.md` with build/push/deploy/verify/rollback
+    procedure for ACA.
+  - `docs/04-test-and-demo-guide.md` with acceptance criteria and demo
+    script.
+  - `docs/05-troubleshooting.md` with common failure patterns and fixes.
+  - `docs/06-customer-one-pager.md` for customer-facing architecture
+    storytelling.
+  - `docs/README.md` documentation index.
+  - `docs/diagrams/*.mmd` source + exported `docs/diagrams/*.svg`
+    architecture assets.
+  - `README.md` links to both architecture documents for quick discovery.
+- **Phase 2.5 — Granite Peak retail website + concierge chat** (live):
+  - Static site: `app/static/index.html`, `site.css`, `chat.js`,
+    `catalog.js`. Vermont mountain-sport branding, hero, catalog grid
+    (proxied from orders API `/catalog` via new bridge route
+    `GET /api/catalog`), floating chat launcher, SSE-streamed assistant
+    bubbles.
+  - Bridge Flask routes added: `GET /` (serves index), `GET /api/catalog`
+    (server-side proxy to orders API).
+  - **Direct orders tools for the Foundry concierge** (`app/orders_tools.py`):
+    `list_my_orders`, `get_order`, `check_return_eligibility`,
+    `create_return`, `get_return_policy`. Foundry calls these directly
+    against the ACA orders API and answers in-line. CS Direct Line tool
+    (`ask_granite_peak_orders`) kept as fallback.
+  - System prompt rewritten (`app/system_prompt.md`) to route order
+    questions to the new dedicated tools first.
+  - Bridge ACA app `granite-peak-bridge` deployed to ACR
+    `acrcpvb0c139ea` / RG `rg-cpv-aca` / env `cae-cpv`. Image tag
+    `v05081900` on revision `granite-peak-bridge--v05081900` (Healthy,
+    100% traffic). Public URL:
+    `https://granite-peak-bridge.happyhill-34f7f143.eastus2.azurecontainerapps.io/`.
+  - System-assigned MI granted `Cognitive Services OpenAI User` on
+    `awm-ai-svc` so Foundry calls succeed without an API key.
+  - End-to-end smoke (2026-05-08): product question ("do you sell
+    mountain bikes?") and order question ("can you list my orders?")
+    both stream natural answers from the same chat widget.
+
+### Known issue
+- Copilot Studio MCP TaskDialog (`awm_granitepeakorders.action.GranitePeakOrdersMCPServer`)
+  is provisioned + connection bound + bot republished, but the CS
+  orchestrator does NOT dispatch to ACA `/mcp/` (zero CS-origin POSTs in
+  ACA logs). Per repo memory rule, API-provisioned actions need a manual
+  remove + re-add in the Studio Tools UI before the orchestrator picks
+  them up. Until that is done, the CS DL escalation tool will fail; the
+  direct Foundry orders tools cover the demo path in the meantime.
+
 - Initial repo scaffold: `.gitignore`, `README.md`, `CHANGELOG.md`, `plan.md`
   (full delivery plan recovered from prior session).
 - Phase 0 done: GitHub repo `amacey-msft/foundry-cs-bridge` (private), branch

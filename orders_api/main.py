@@ -13,6 +13,7 @@ Customer model (Phase 1 v1):
 """
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from datetime import date, datetime, timedelta, timezone
 from typing import Iterable
 from uuid import uuid4
@@ -29,6 +30,17 @@ from .mock_data import (
     RETURN_WINDOW_DAYS,
 )
 
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    # MCP streamable HTTP needs its session manager's task group running
+    # for the lifetime of the app. Import here to avoid circular import.
+    from .mcp_server import mcp as _mcp
+
+    async with _mcp.session_manager.run():
+        yield
+
+
 app = FastAPI(
     title="Granite Peak Outfitters — Orders API (mock)",
     version="0.1.0",
@@ -38,6 +50,7 @@ app = FastAPI(
         "Copilot Studio agent (via HTTP Request tools) and the Granite "
         "Peak web front end."
     ),
+    lifespan=_lifespan,
 )
 
 
@@ -358,3 +371,15 @@ def list_returns(
 @app.get("/policies/return", response_model=ReturnPolicy, tags=["policies"])
 def get_return_policy() -> ReturnPolicy:
     return ReturnPolicy(return_window_days=RETURN_WINDOW_DAYS, text=RETURN_POLICY_TEXT)
+
+
+# ---------------------------------------------------------------------------
+# MCP server (Streamable HTTP transport, mounted at /mcp)
+# ---------------------------------------------------------------------------
+# Imported AFTER the FastAPI handlers above so the MCP tools can call them
+# directly. CS connects via a custom connector with `mcp-streamable-1.0`.
+# The MCP session manager's task group is started by the FastAPI lifespan
+# above (see `_lifespan`).
+from .mcp_server import mcp as _mcp  # noqa: E402
+
+app.mount("/mcp", _mcp.streamable_http_app())

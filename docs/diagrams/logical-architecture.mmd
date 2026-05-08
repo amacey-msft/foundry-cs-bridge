@@ -1,0 +1,41 @@
+%%{init: {'look': 'classic', 'theme': 'base', 'themeVariables': {
+    'fontFamily': 'Segoe UI, Inter, Arial, sans-serif',
+    'fontSize': '16px',
+    'primaryColor': '#E8F3ED',
+    'primaryTextColor': '#173A2A',
+    'primaryBorderColor': '#2F6E4F',
+    'lineColor': '#2C5E45',
+    'tertiaryColor': '#F5EFE5',
+    'clusterBkg': '#F8FAF8',
+    'clusterBorder': '#9DB8AA'
+}, 'flowchart': { 'curve': 'basis', 'nodeSpacing': 55, 'rankSpacing': 70, 'htmlLabels': true }}}%%
+
+flowchart LR
+        subgraph EXP[Experience]
+            U([Customer]):::actor
+            W[Granite Peak Website<br/>Chat Widget]:::ui
+            B[Bridge API<br/>Flask + SSE Stream]:::bridge
+        end
+
+        subgraph ORCH[AI Orchestration]
+            F[Foundry Concierge<br/>Azure OpenAI gpt-4.1-mini-gp]:::ai
+            C[Copilot Studio<br/>Orders Agent]:::ordersAgent
+        end
+
+        subgraph DATA[Order Domain]
+            O[Orders API<br/>FastAPI + MCP Server]:::ordersApi
+        end
+
+        U --> W --> B --> F
+        F -->|Product Q and A| B
+        F -->|Order intent tool<br/>ask_granite_peak_orders| C
+        C -->|MCP tool action| O
+        F -->|Fallback direct tool<br/>list/get/return policy| O
+        B --> W --> U
+
+        classDef actor fill:#FFFFFF,stroke:#2F6E4F,stroke-width:2px,color:#173A2A;
+        classDef ui fill:#E8F3ED,stroke:#2F6E4F,stroke-width:2px,color:#173A2A;
+        classDef bridge fill:#D9EDE3,stroke:#2F6E4F,stroke-width:2px,color:#173A2A;
+        classDef ai fill:#EAF0FF,stroke:#4864A8,stroke-width:2px,color:#1E2A4A;
+        classDef ordersAgent fill:#FFF2E8,stroke:#C66B2A,stroke-width:2px,color:#5B2F12;
+        classDef ordersApi fill:#FDF8F1,stroke:#C66B2A,stroke-width:2px,color:#5B2F12;

@@ -1,0 +1,34 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Granite Peak Orders MCP",
+    "description": "Model Context Protocol (Streamable HTTP) server exposing Granite Peak Outfitters orders, returns, and policy tools to Copilot Studio agents.",
+    "version": "1.0.0"
+  },
+  "host": "granite-peak-orders.happyhill-34f7f143.eastus2.azurecontainerapps.io",
+  "basePath": "/",
+  "schemes": ["https"],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/mcp/": {
+      "post": {
+        "summary": "Granite Peak Orders MCP Server",
+        "description": "Invoke the Granite Peak Outfitters orders MCP server to look up orders, check return eligibility, create returns, and read the return policy.",
+        "x-ms-agentic-protocol": "mcp-streamable-1.0",
+        "operationId": "InvokeMCP",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {},
+  "security": [],
+  "tags": []
+}

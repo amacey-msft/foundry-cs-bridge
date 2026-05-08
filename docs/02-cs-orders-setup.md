@@ -1,7 +1,7 @@
-# Phase 1c — Copilot Studio orders agent setup
+# Copilot Studio orders agent setup
 
-This is the manual provisioning recipe for `awm_contosoorders`, the consumer
-front-of-house orders agent the Foundry chat backend will delegate to. Use
+This is the manual provisioning recipe for `awm_granitepeakorders`, the example
+orders agent the Foundry bridge delegates to. Use
 **Studio UI** (not Dataverse `/botcomponents` script), per the user-memory
 note that scripted flow-action bindings need a UI re-add anyway.
 
