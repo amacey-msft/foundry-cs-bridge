@@ -71,10 +71,13 @@ Web-only consumer UI (no Teams, no voice, no SN handoff in v1 — backlog).
 4. Create branch `feat/initial-scaffold`, push, open draft PR.
 
 ### Phase 1 — Copilot Studio orders agent
-1. Create new CS agent `awm_contosoorders` (generative orchestration, per
-   user preferences rule). Topics: OrderStatus, ReturnRequest, RefundQuery,
-   ExchangeRequest. Each topic uses HTTP Request tool against a stub orders
-   API hosted in this repo (FastAPI under `orders_api/`).
+1. Create new CS agent (working name in plan: `awm_contosoorders`; actual
+   display name once provisioned: **Granite Peak Orders Agent** — see
+   `docs/02-cs-orders-setup.md` for the full provisioning recipe).
+   Generative orchestration (per user preferences rule). Topics:
+   OrderStatus, MyOrders, ReturnRequest, ReturnPolicy. Each topic uses
+   HTTP Request tool against the in-repo `orders_api/` (FastAPI) reachable
+   over devtunnel.
 2. Stub orders API returns deterministic mock data keyed by order id (no
    real Power Platform connectors in v1; keeps demo self-contained).
 3. Topic instructions tightened to short responses (avoid sync A2A timeout).

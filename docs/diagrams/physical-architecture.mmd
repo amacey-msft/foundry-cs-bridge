@@ -1,0 +1,39 @@
+%%{init: {'look': 'classic', 'theme': 'base', 'themeVariables': {
+  'fontFamily': 'Segoe UI, Inter, Arial, sans-serif',
+  'fontSize': '15px',
+  'primaryColor': '#E8F3ED',
+  'primaryTextColor': '#173A2A',
+  'primaryBorderColor': '#2F6E4F',
+  'lineColor': '#2C5E45',
+  'clusterBkg': '#F8FAF8',
+  'clusterBorder': '#9DB8AA'
+}, 'flowchart': { 'curve': 'basis', 'nodeSpacing': 55, 'rankSpacing': 70, 'htmlLabels': true }}}%%
+
+flowchart LR
+    User([Customer Browser]):::actor
+
+    subgraph SUB[Azure Subscription - b0c139ea-82e8-4e26-94cc-d8e6dda0c4ec]
+      subgraph ACA[Azure Container Apps - rg-cpv-aca / cae-cpv / eastus2]
+        Bridge[granite-peak-bridge<br/>Flask UI + Chat API<br/>Port 5000]:::bridge
+        Orders[granite-peak-orders<br/>FastAPI + MCP<br/>Port 8000]:::orders
+      end
+
+      AOAI[Azure OpenAI<br/>awm-ai-svc.openai.azure.com<br/>gpt-4.1-mini-gp]:::ai
+      PP[Power Platform / Copilot Studio<br/>Env 63b4b29b-b3b0-ed70-9136-524a53a22e06<br/>Agent awm_granitepeakorders]:::pp
+      ACR[Azure Container Registry<br/>acrcpvb0c139ea.azurecr.io]:::infra
+    end
+
+    User -->|HTTPS| Bridge
+    Bridge -->|Catalog + order API| Orders
+    Bridge -->|AAD managed identity token| AOAI
+    Bridge -->|Direct Line activity| PP
+    PP -->|MCP connector call| Orders
+    ACR -. image pull .-> Bridge
+    ACR -. image pull .-> Orders
+
+    classDef actor fill:#FFFFFF,stroke:#2F6E4F,stroke-width:2px,color:#173A2A;
+    classDef bridge fill:#D9EDE3,stroke:#2F6E4F,stroke-width:2px,color:#173A2A;
+    classDef orders fill:#FDF8F1,stroke:#C66B2A,stroke-width:2px,color:#5B2F12;
+    classDef ai fill:#EAF0FF,stroke:#4864A8,stroke-width:2px,color:#1E2A4A;
+    classDef pp fill:#FFF2E8,stroke:#C66B2A,stroke-width:2px,color:#5B2F12;
+    classDef infra fill:#EEF3F8,stroke:#5B708D,stroke-width:2px,color:#253449;
