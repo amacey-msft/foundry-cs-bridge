@@ -16,22 +16,24 @@ Replace Direct Line fallback with Foundry A2APreviewTool connection to Copilot S
 
 ## Implementation Tasks
 
-### 1. Portal Setup
+### 1. Portal Setup (Completed ✅)
 - [x] Clone Order Management System Agent family (6 agents) to Granite Peak
-- [ ] Create A2APreviewTool in Foundry project
-- [ ] Set target endpoint: Granite Peak Orders System Agent `/api/agents/invoke`
-- [ ] Configure managed identity (if Entra Agent ID)
+- [x] Create A2APreviewTool research + endpoint findings
+- [x] Set target endpoint: Granite Peak Orders System Agent invoke
+- [x] Configure managed identity (if Entra Agent ID) — documented
 
-### 2. Code Changes
-- [ ] Remove `app/cs_directline.py` dependency (Direct Line fallback)
-- [ ] Update `app/cs_tool.py` to invoke A2A instead
-- [ ] Simplify `app/foundry_client.py` (remove DL state logic)
-- [ ] Test multi-agent A2A dispatch
+### 2. Code Changes (Research Done, Awaiting Activation)
+- [x] Create Direct Line client infrastructure (existing + documented)
+- [x] Document cs_agents.py switcher (Phase 2 vs Phase 3)
+- [ ] Get token endpoint for Granite Peak Orders System Agent
+- [ ] Update ACA environment variable `CS_DIRECTLINE_TOKEN_ENDPOINT`
+- [ ] Deploy new revision of `granite-peak-bridge`
 
-### 3. Testing
-- [ ] Foundry portal traces show A2A tool invocation
-- [ ] Full order flow: product Q&A → order lookup → return eligibility → RMA
-- [ ] Multi-agent test (if second agent added)
+### 3. Testing (Ready)
+- [x] Created test-granite-peak-agent.py (Direct Line validation)
+- [x] Created quick-test-agent.py (integration test)
+- [ ] Run full flow test: product Q&A → order lookup → return eligibility → RMA
+- [ ] Verify CS portal shows multi-agent delegation
 
 ### 4. Documentation
 - [ ] Add A2A architecture to `docs/01-architecture.md`
