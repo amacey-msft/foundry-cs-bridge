@@ -17,20 +17,21 @@ Replace Direct Line fallback with Foundry A2APreviewTool connection to Copilot S
 ## Implementation Tasks
 
 ### 1. Portal Setup
+- [x] Clone Order Management System Agent family (6 agents) to Granite Peak
 - [ ] Create A2APreviewTool in Foundry project
-- [ ] Set target endpoint: CS agent `/api/agents/invoke`
-- [ ] Configure managed identity + grant Entra Agent ID role (if needed)
+- [ ] Set target endpoint: Granite Peak Orders System Agent `/api/agents/invoke`
+- [ ] Configure managed identity (if Entra Agent ID)
 
 ### 2. Code Changes
-- [ ] Remove `app/cs_directline.py`
-- [ ] Update `app/cs_tool.py` to invoke A2A instead of DL fallback
-- [ ] Simplify `app/foundry_client.py` tool dispatch (remove DL token/session logic)
-- [ ] Update `app/system_prompt.md` if needed
+- [ ] Remove `app/cs_directline.py` dependency (Direct Line fallback)
+- [ ] Update `app/cs_tool.py` to invoke A2A instead
+- [ ] Simplify `app/foundry_client.py` (remove DL state logic)
+- [ ] Test multi-agent A2A dispatch
 
 ### 3. Testing
 - [ ] Foundry portal traces show A2A tool invocation
-- [ ] Order flow still works end-to-end
-- [ ] Multi-agent test: orders + support agent dispatch
+- [ ] Full order flow: product Q&A → order lookup → return eligibility → RMA
+- [ ] Multi-agent test (if second agent added)
 
 ### 4. Documentation
 - [ ] Add A2A architecture to `docs/01-architecture.md`
