@@ -9,7 +9,7 @@ note that scripted flow-action bindings need a UI re-add anyway.
 
 | Field | Value |
 |---|---|
-| Organization URL | `https://orga5bae564.crm.dynamics.com` |
+| Organization URL | `https://<your-org>.crm.dynamics.com` |
 | Organization ID | `1870688f-653b-f111-83fa-6045bd023806` |
 | Environment ID | `63b4b29b-b3b0-ed70-9136-524a53a22e06` |
 | Region | United States |
