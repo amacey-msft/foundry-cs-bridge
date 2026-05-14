@@ -58,8 +58,8 @@ Add them to your local `.env` (NOT committed):
 ```
 CS_AGENT_SCHEMA_NAME=awm_xxxxx
 CS_AGENT_APP_ID=<guid>
-CS_ENVIRONMENT_API_HOST=63b4b29bb3b0ed709136524a53a22e.06.environment.api.powerplatform.com
-CS_DIRECTLINE_TOKEN_ENDPOINT=https://63b4b29bb3b0ed709136524a53a22e.06.environment.api.powerplatform.com/powervirtualagents/botsbyschema/awm_xxxxx/directline/token?api-version=2022-03-01-preview
+CS_ENVIRONMENT_API_HOST=<env-id>.06.environment.api.powerplatform.com
+CS_DIRECTLINE_TOKEN_ENDPOINT=https://<env-id>.06.environment.api.powerplatform.com/powervirtualagents/botsbyschema/awm_xxxxx/directline/token?api-version=2022-03-01-preview
 ```
 
 Then update `/memories/repo/cs-orders-agent.md` (file created in Phase 1c
