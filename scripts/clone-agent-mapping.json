@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-05-08T14:46:47.859032",
+  "clones": [
+    {
+      "origId": "812147d0-3c69-4d6c-bd8e-7c4c086c50c4",
+      "newId": "5edfba3a-0e4b-f111-bec6-00224805f8f9",
+      "origName": "Order Management System Agent",
+      "newName": "Granite Peak Orders System Agent",
+      "schemaname": "gp_orders_2e1e56e18da84181b9f1"
+    },
+    {
+      "origId": "84e89eb3-333b-417a-bac6-4c775838d948",
+      "newId": "7bdfba3a-0e4b-f111-bec6-00224805f8f9",
+      "origName": "My Orders Agent",
+      "newName": "Granite Peak Orders - My Orders Agent",
+      "schemaname": "gp_orders_af3d1fc83f354c0988ca"
+    },
+    {
+      "origId": "1657cd75-bf3c-f111-bec6-000d3a5c574a",
+      "newId": "55e7843f-0e4b-f111-bec6-00224805fd3c",
+      "origName": "Order Management Agent",
+      "newName": "Granite Peak Orders - Order Management Agent",
+      "schemaname": "gp_orders_4169b5cc82794d8e86f5"
+    },
+    {
+      "origId": "16418819-1163-456c-8717-36fc63d758ce",
+      "newId": "2939e53d-0e4b-f111-bec6-00224805fe61",
+      "origName": "Order Lookup Agent",
+      "newName": "Granite Peak Orders - Order Lookup Agent",
+      "schemaname": "gp_orders_6dc32d9668384f71b34d"
+    },
+    {
+      "origId": "c0d865c8-b9be-4c3f-b9df-b60085c2fd4d",
+      "newId": "66e7843f-0e4b-f111-bec6-00224805fd3c",
+      "origName": "Return Eligibility Agent",
+      "newName": "Granite Peak Orders - Return Eligibility Agent",
+      "schemaname": "gp_orders_34deef6b9f94449bb581"
+    },
+    {
+      "origId": "814f03c8-7cf5-479b-b930-30ff808d7860",
+      "newId": "f7746545-0e4b-f111-bec6-00224805fe61",
+      "origName": "Process Return Agent",
+      "newName": "Granite Peak Orders - Process Return Agent",
+      "schemaname": "gp_orders_058ddae6dd804186ad20"
+    }
+  ]
+}
